@@ -1,0 +1,13 @@
+
+tests_include:
+  - test_bfd_session
+
+test_bfd_session:
+  - command: show bfd session 
+  - iterate:
+      xpath: 'bfd-session'
+      id: session-state 
+      tests:
+        - no-diff: session-state
+          err: "Test Failed!!! State on <{{post['session-neighbor']}}> is <{{post['session-state']}}> now but earlier was <{{pre['session-state']}}> for neighbor <{{post['session-neighbor']}}> on interface <{{post[''session-interface']}}>"
+          info: "State has not changed for neighbor <{{post['session-neighbor']}}> on interface <{{post['session-interface']}}>"

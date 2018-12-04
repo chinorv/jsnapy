@@ -1,0 +1,43 @@
+# for multiple devices, can be given like this:
+hosts:
+  - include: devices.yml
+    group: VSRX  
+
+tests:
+  - test_alarm_check.yml
+  - test_arp.yml 
+  - test_bfd_session.yml
+  - test_bgp_summary.yml
+  - test_chassis_environment.yml
+  - test_chassis_hardware.yml 
+  - test_core_dump_single_re.yml
+#  - test_core_dump_dual_re.yml
+  - test_interfaces.yml
+  - test_isis.yml 
+  - test_l2circuit.yml
+  - test_ldp.yml
+  - test_mpls.yml
+  - test_ospf.yml
+  - test_pic_status.yml
+  - test_pim.yml
+#  - test_pim_mvpn.yml #For production
+  - test_route_instance.yml #Lab instance vpn-1
+#  - test_route_mvpn.yml #For production
+  - test_route_summary.yml
+#  - test_routing-engine_dual.yml #For production
+  - test_routing-engine_single.yml #lab testing only  
+  - test_rsvp.yml  
+  - test_vrrp.yml
+#  - test_sw_version_dual_re.yml
+  - test_sw_version_single_re.yml #lab testing only
+  
+  
+
+# can use sqlite to store data and compare them
+# sqlite:
+# - store_in_sqlite: True
+#	check_from_sqlite: True
+#	database_name: jbb.db
+#	compare: 1,0
+
+# can send mail by specifying mail mail: send_mail.yml

@@ -1,0 +1,19 @@
+VSRX:  
+  - 192.168.1.59: #R5 PIM Instance
+      username: lab
+      passwd: lab123                       
+  #- 192.168.1.56
+  #   username: lab
+  #   passwd: lab123
+
+#DSR:                      
+#  - 10.209.16.206:
+#      username: demo
+#      passwd: demo123
+
+
+#BBR:                      
+#  - 10.209.16.214:
+#      username: demo
+#      passwd: demo123
+ 

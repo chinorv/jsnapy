@@ -1,0 +1,36 @@
+
+tests_include:
+  - isis_interface 
+  - isis_neighbor 
+isis_interface: 
+  - command: show isis interface 
+  - iterate: 
+      xpath: isis-interface 
+      id: interface-name       
+      tests:    
+        - err: Test Failed!!! isis interface {{post["interface-name"]}} change Level 1 state to {{post["isis-interface-state-one"]}}.     
+          info: isis interfaces {{post["interface-name"]}} has the same Level 1 state.       
+          no-diff: isis-interface-state-one
+        - err: Test Failed!!! isis interface {{post["interface-name"]}} change Level 2 state to {{post["isis-interface-state-two"]}}.         
+          info: isis interfaces {{pre["interface-name"]}} has the same Level 2 state.       
+          no-diff: isis-interface-state-two
+
+isis_neighbor:
+  - command: show isis adjacency
+  - iterate:
+      xpath: isis-adjacency
+      id: interface-name
+      tests:
+        - err: 'Test Failed!!! isis interface gone missing: {{pre["interface-name"]}} going to {{pre["system-name"]}}'
+          info: No interface is missing 
+          list-not-less:
+        - err: 'Test Failed!!! {{pre["interface-name"]}}	was going to {{pre["system-name"]}}, now going to {{post["system-name"]}}'
+          info: isis interface {{post["interface-name"]}} is going to {{post["system-name"]}} 
+          no-diff: system-name
+        - err: Test Failed!!! isis neighbor on {{post["interface-name"]}} to {{post["system-name"]}} is not up, rather {{post["adjacency-state"]}}
+          info: All isis neighbors are up
+          is-equal: adjacency-state, Up
+        
+              
+      
+

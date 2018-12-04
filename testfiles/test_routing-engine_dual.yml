@@ -1,0 +1,15 @@
+
+tests_include:
+  - test_routing-engine
+
+test_routing-engine:
+  - command: show chassis routing-engine
+  - iterate:
+      xpath: //route-engine-information/route-engine 
+      id: 'slot'
+      tests:
+        - no-diff: mastership-state
+          info: "RE SLOT {{post['slot']}} has mastership-state \"{{post['mastership-state']}}\" "
+          err: "Test Failed!!! Junos version does not match earlier on RE SLOT {{post['slot']}} it was \"{{pre['mastership-state']}}\" and now it is \"{{post['mastership-state']}}\""
+
+

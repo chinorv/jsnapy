@@ -1,0 +1,28 @@
+tests_include:
+  - ldp_interface
+  - ldp_neighbor
+
+ldp_interface:
+  - command: show ldp interface
+  - iterate:
+      xpath: ldp-interface
+      id: ldp-neighbor-count       
+      tests:
+        - err: Test Failed!!! ldp interface {{post["interface-name"]}} does not have any neighbors 
+          info: ldp interfaces {{post["interface-name"]}} have the same number of neighbors
+          no-diff: ldp-neighbor-count 
+
+ldp_neighbor:
+  - command: show ldp neighbor
+  - iterate:
+      xpath: ldp-neighbor
+      id: interface-name 
+      tests:
+        - err: 'Test Failed!!! ldp interface gone missing: {{pre["interface-name"]}} going to {{pre["ldp-neighbor-address"]}}'
+          info: LDP interface {{pre["interface-name"]}} is present
+          list-not-less:
+        - err: 'Test Failed!!! {{pre["ldp-neighbor-address"]}} on {{pre["interface-name"]}} is missing'
+          info: Neighbors {{post["ldp-neighbor-address"]}} is present 
+          no-diff: ldp-neighbor-address
+      
+

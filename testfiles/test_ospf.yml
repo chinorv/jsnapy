@@ -1,0 +1,48 @@
+
+tests_include:
+  - ospf-neighbor
+  - ospf_interface
+  - ospf_route 
+
+ospf_interface: 
+  - command: show ospf interface 
+  - iterate: 
+      xpath: ospf-interface[interface-name != "lo0.0"]   
+      tests:    
+        - err: OSPF interface {{post["interface-name"]}} does not have any neighbors     
+          info: OSPF interfaces must have at least 1 neighbor      
+          is-gt: neighbor-count, 0 
+
+ospf-neighbor:
+  - command: show ospf neighbor
+  - iterate:
+      xpath: ospf-neighbor
+      id: interface-name
+      tests:
+        - err: 'Test Failed!!! OSPF interface gone missing: {{pre["interface-name"]}} going to {{pre["neighbor-address"]}}'
+          info: No OSPF interface is missing 
+          list-not-less:
+        - err: 'Test Failed!!! New OSPF interface added: {{post["interface-name"]}} going to {{post["neighbor-address"]}}'
+          info: No new OSPF interface was added 
+          list-not-more:
+        - err: 'Test Failed!!! {{pre["neighbor-address"]}} on {{pre["interface-name"]}} is now going to {{post["neighbor-address"]}}'
+          info: OSPF no neighbor change 
+          no-diff: neighbor-address
+        - err: Test Failed!!! OSPF neighbor on {{post["interface-name"]}} to {{post["neighbor-address"]}} is not up; it is {{post["ospf-neighbor-state"]}}
+          info: All OSPF neighbors are up
+          is-equal: ospf-neighbor-state, Full
+        - err: 'Test Failed!!! OSPF neighbor on {{post["interface-name"]}} to {{post["neighbor-address"]}} state change from {{pre["ospf-neighbor-state"]}} to {{post["ospf-neighbor-state"]}}'
+          info: 'No state change for OSPF neighbors' 
+          all-same: ospf-neighbor-state
+
+ospf_route: 
+  - command: show ospf route
+  - iterate: 
+       xpath: ospf-topology-route-table/ospf-route/ospf-route-entry
+       id: address-prefix   
+       tests:    
+         - err: Test Failed!!! OSPF prefix {{pre["address-prefix"]}} is missing    
+           info: OSPF prefix {{pre["address-prefix"]}} is present      
+           no-diff: address-prefix             
+      
+

@@ -1,0 +1,45 @@
+ 
+tests_include:
+  - show_interfaces_extensive
+  - interface_terse
+
+show_interfaces_extensive:
+  - command: show interfaces extensive
+  - iterate:
+      xpath: physical-interface
+      id: name
+      tests:
+        - all-same: admin-status
+          err: "Test Failed!!! {{post['name']}} is {{post['admin-status']}} before was {{pre['admin-status']}} \t"
+          info: "Test Passed! States are the same, interface <{{post['name']}}> is: with admin status <{{post['admin-status']}}> "
+  - iterate:
+      xpath: physical-interface[contains(name,"ge")]
+      id: name
+      tests:
+        - is-equal: mtu, 9100
+          err: "Test Failed!!! {{post['name']}} has {{post['mtu']}} less than 9100"
+          info: "Test Passed! MTU is 9100"
+  - iterate:
+      xpath: physical-interface[contains(name,"-")]
+      id: name
+      tests:
+        - delta: traffic-statistics/output-bps, 20%
+          err: "Test Failed!!! {{post['name']}} has {{post['traffic-statistics/input-bps']}} and before was {{pre['traffic-statistics/input-bps']}}"
+          info: "Test Passed! Same output bps"
+  - iterate:
+      xpath: physical-interface[contains(name,"-")]
+      id: name
+      tests:
+        - delta: traffic-statistics/input-bps, 20%
+          err: "Test Failed!!! {{post['name']}} has {{post['traffic-statistics/input-bps']}} and before was {{pre['traffic-statistics/input-bps']}}"
+          info: "Test Passed! Same input bps"
+
+interface_terse:
+  - command: show interfaces terse
+  - iterate:
+      xpath: physical-interface/logical-interface
+      id: name
+      tests:
+        - no-diff: oper-status
+          err: "Test Failed!!! {{post['name']}} is {{post['oper-status']}} before was {{pre['oper-status']}} \t"
+          info: "Test Passed! States are the same, interface <{{post['name']}}> is <{{post['oper-status']}}> "  

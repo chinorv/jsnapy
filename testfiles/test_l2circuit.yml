@@ -1,0 +1,16 @@
+tests_include:
+  - l2circuit
+
+l2circuit:
+  - command: show l2circuit connections
+  - iterate:
+      xpath: l2circuit-neighbor/connection
+      id: connection-id 
+      tests:        
+        - err: Test Failed!!! l2circuit neighbor on {{post["connection-id"]}} is not up, rather {{post["connection-status"]}}
+          info: l2circuit neighbors {{pre["remote-pe"]}} is up 
+          is-equal: connection-status, Up
+        - err: 'Test Failed!!! l2circuit neighbor {{pre["remote-pe"]}} on interface {{pre["connection-id"]}} is missing'  
+          info: l2circuit neighbor {{pre["remote-pe"]}} on interface {{pre["connection-id"]}} is present
+          no-diff: remote-pe
+      

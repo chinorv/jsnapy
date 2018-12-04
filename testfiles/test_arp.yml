@@ -1,0 +1,21 @@
+tests_include:
+  - test_arp_mac  
+
+test_arp_mac:
+  - command: show arp no-resolve
+  - iterate:
+      xpath: '//arp-table-information/arp-table-entry' 
+      id: './mac-address'
+      tests:
+        - no-diff: ip-address
+          err: "Test Failed!!! Ip-address got changed for mac-address <{{pre['mac-address']}}> on <{{pre['interface-name']}}>, before it was <{{pre['ip-address']}}>, now it is <{{post['ip-address']}}>" 
+          info: "ip-address <{{post['ip-address']}}> is same for mac <{{post['mac-address']}}>"
+        - no-diff: interface-name
+          err: "Test Failed!! interface-name got changed for mac-address <{{pre['mac-address']}}>, before it was <{{pre['interface-name']}}>, now it is <{{post['interface-name']}}>"
+          info: "interface-name <{{pre['interface-name']}}> is same for mac <{{pre['mac-address']}}>"
+        - list-not-less: 
+          err: "Test Failed!!! mac-address: <{{pre['mac-address']}}> with interface-name <{{pre['interface-name']}}> is not present in post-snap"
+          info: "mac-address <{{pre['mac-address']}}> is same for <{{post['interface-name']}}>"
+        - list-not-more: 
+          err: "Test Failed!!! <{{post['mac-address']}}> mac-address with interface-name <{{post['interface-name']}}> is not present in pre snapshot"
+          info: "mac-address <{{post['mac-address']}}> is same for <{{post['interface-name']}}>"

@@ -1,0 +1,15 @@
+
+tests_include:
+  - test_routing-engine_single
+
+test_routing-engine_single:
+  - command: show chassis routing-engine
+  - iterate:
+      xpath: //route-engine-information
+      id: 'route-engine '
+      tests:
+        - no-diff: status
+          info: "Great! We have the same RE state"
+          err: "Oh no!! RE states are different"
+
+

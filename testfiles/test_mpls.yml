@@ -1,0 +1,30 @@
+
+tests_include:
+  - mpls_interface
+  - mpls_lsp 
+
+mpls_interface:
+  - command: show mpls interface
+  - iterate:
+      xpath: mpls-interface
+      id: interface-name 
+      tests:
+      - err: 'Test Failed!!! MPLS interface {{pre["interface-name"]}} is missing' 
+        info: 'MPLS interface {{pre["interface-name"]}} is the present'
+        list-not-less:
+      - err: Test Failed!!! MPLS interface {{post["interface-name"]}} is not up, rather {{post["mpls-interface-state"]}}
+        info: MPLS interface {{post["interface-name"]}} is up 
+        is-equal: mpls-interface-state, Up
+
+mpls_lsp:
+  - command: show mpls lsp detail
+  - iterate:
+      xpath: rsvp-session-data/rsvp-session/mpls-lsp
+      id: name
+      tests:
+        - list-not-less:
+          err: 'Test Failed!!! MPLS LSP {{pre["name"]}} to {{pre["destination- address"]}} is missing'
+          info: 'MPLS LSP {{pre["name"]}} is present'           
+        - err: 'Test Failed!!! MPLS LSP {{post["name"]}} to {{post["destination-address"]}} has LSP state {{post["lsp-state"]}}.'
+          info: MPLS LSP {{post["name"]}} is Up 
+          is-in: lsp-state, Up

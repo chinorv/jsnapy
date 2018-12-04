@@ -1,0 +1,29 @@
+
+tests_include:
+  - rsvp-interface
+  - rsvp_session
+
+rsvp-interface:
+  - command: show rsvp interface
+  - iterate:
+      xpath: rsvp-interface
+      id: interface-name 
+      tests:
+      - list-not-less:
+        err: 'Test Failed!!! RSVP interface {{pre["interface-name"]}} is missing' 
+        info: 'Test Succeeded!! RSVP interface {{pre["interface-name"]}} is present'
+        
+      - is-equal: rsvp-status, Up
+        err: Test Failed!!! RSVP neighbor on {{post["interface-name"]}} is {{post["rsvp-status"]}} and before was {{pre["rsvp-status"]}}
+        info: Test Succeeded!! RSVP neighbor on {{post["interface-name"]}} is Up
+        
+rsvp_session:
+  - command: show rsvp session
+  - iterate:
+      xpath: rsvp-session-data/rsvp-session
+      tests:
+        - err: 'Test Failed!!! RSVP session with name {{post["name"]}} to {{post["destination-address"]}} has LSP state {{post["lsp-state"]}}.' 
+          info: Test Succeeded!! RSVP LSP {{post["name"]}} state is Up
+          is-in: lsp-state, Up
+        
+

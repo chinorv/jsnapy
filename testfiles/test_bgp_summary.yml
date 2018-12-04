@@ -1,0 +1,32 @@
+
+tests_include:
+  - bgp-summary 
+
+bgp-summary:
+  - command: show bgp summary
+    xpath: '/bgp-information'
+  - iterate:
+      xpath: bgp-peer
+      id: peer-address 
+      tests:
+      - err: 'Test Failed!!! BGP peer {{post["peer-address"]}} with AS: {{post["peer-as"]}}  is not Estab, is {{post["peer-state"]}}'
+        info: BGP Peers {{post["peer-address"]}} is 'Established' 
+        is-equal: peer-state, Established
+      - err: 'Test Failed!!! Oh no! BGP peer {{pre["peer-address"]}} on {{pre["bgp-rib/name"]}} went away' 
+        info: BGP peer {{post["peer-address"]}} is present
+        list-not-less: null
+      - err: 'Test Failed!!! Great! BGP peer {{post["peer-address"]}} on {{post["bgp-rib/name"]}} was added !' 
+        info: No BGP peers added
+        list-not-more: null 
+  - iterate:
+      xpath: '/bgp-information/bgp-peer/bgp-rib'
+      id: name, ../peer-address 
+      tests:
+        - delta: active-prefix-count, 20%
+          err: ' Test Failed!!! The number of active prefix of the BGP Table {{pre["name"]}} have changed more than 20%. name: {{post["name"]}} and peer-address: {{post["../peer-address"]}} [Before = {{pre["active-prefix-count"]}} / After = {{post["active-prefix-count"]}}]'
+          info: 'BGP peer {{post["../peer-address"]}} on table {{post["name"]}} is within the active prefix tolerance of 20%. Pre:{{pre["active-prefix-count"]}} post:{{post["active-prefix-count"]}}'    
+  
+  
+        
+    
+

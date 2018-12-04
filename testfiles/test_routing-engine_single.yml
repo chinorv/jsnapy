@@ -1,0 +1,15 @@
+
+tests_include:
+  - test_routing-engine
+
+test_routing-engine:
+  - command: show chassis routing-engine
+  - iterate:
+      xpath: //route-engine-information
+      id: 'route-engine '
+      tests:
+        - no-diff: status
+          info: "Test Succeeded!! Same RE state"
+          err: "Test Failed!!! Dif states"
+
+

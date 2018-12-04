@@ -1,0 +1,6 @@
+
+tests_include:
+  - show_config
+
+show_config:
+  - command: show configuration

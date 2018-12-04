@@ -1,0 +1,49 @@
+tests_include:
+  - pim_interface_mvpn
+  - pim_neighbor_mvpn
+  - pim_join_mvpn
+  - multicast_route_mvpn
+
+pim_interface:
+  - command: show pim interface instance MVPN
+  - iterate:
+      xpath: '//pim-interfaces-information/pim-interface'
+      id: pim-interface-name, ../pim-instance       
+      tests:
+        - err: Test Failed!!! pim interface {{post["pim-interface-name"]}} status is {{post["status"]}} and was {{pre["status"]}}
+          info: pim interfaces {{post["pim-interface-name"]}} status is the same.
+          no-diff: status 
+
+pim_neighbor:
+  - command: show pim neighbor instance MVPN
+  - iterate:
+      xpath: '//pim-neighbors-information/pim-interface/pim-neighbor'
+      id: pim-interface-name 
+      tests:
+        - err: Test Failed!!! pim interface gone missing 
+          info: pim interface {{post["pim-interface-name"]}} is present
+          no-diff: pim-interface-name 
+        - err: 'Test Failed!!! Neighbor {{pre["pim-neighbor-address"]}} on {{pre["pim-interface-name"]}} is missing'
+          info: Neighbors {{pre["pim-neighbor-address"]}} is present 
+          no-diff: pim-neighbor-address
+
+pim_join:
+  - command: show pim join instance MVPN
+  - iterate:
+      xpath: join-family/join-group
+      id: multicast-group-address       
+      tests:
+        - err: Test Failed!!! pim group {{pre["multicast-group-address"]}} with upstream interface {{pre["upstream-interface-name"]}} is missing
+          info: pim group {{pre["multicast-group-address"]}} is present.
+          no-diff: multicast-group-address 
+
+multicast_route:
+  - command: show multicast route instance MVPN
+  - iterate:
+      xpath: route-family/multicast-route
+      id: multicast-group-address       
+      tests:
+        - err: Test Failed!!! pim group {{pre["multicast-group-address"]}} with upstream interface {{pre["upstream-interface-name"]}} is missing
+          info: pim group {{pre["multicast-group-address"]}} is present.
+          no-diff: multicast-group-address               
+

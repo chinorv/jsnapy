@@ -1,0 +1,23 @@
+
+tests_include:
+  - vrrp_summary
+  
+vrrp_summary: 
+  - command: show vrrp summary 
+  - iterate:
+      xpath: vrrp-interface
+      id: interface       
+      tests:
+        - err: 'Test Failed!!! VRRP interface {{pre["interface"]}} is missing'
+          info: VRRP interface {{post["interface"]}} is present 
+          list-not-less:        
+        - err: Test Failed!!! VRRP interface {{pre["interface"]}} was {{pre["vrrp-state"]}}, and now is {{post["vrrp-state"]}}'
+          info: VRRP interface {{post["interface"]}} has not changed mastership state. 
+          no-diff: vrrp-state
+        - err: Test Failed!!!'VRRP interface {{pre["interface"]}} was {{pre["interface-state"]}} and now is {{post["interface-state"]}}'
+          info: VRRP interface {{post["interface"]}} state has not changed
+          no-diff: interface-state
+
+            
+      
+

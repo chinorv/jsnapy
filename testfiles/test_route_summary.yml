@@ -1,0 +1,19 @@
+
+tests_include:
+  - check_route_summary
+
+check_route_summary:
+  - command: show route summary
+  - iterate:
+      xpath: //route-summary-information/route-table 
+      id: table-name
+      tests:
+        - delta: active-route-count, 20%
+          info: "Active route for routing table <{{post['table-name']}}> has changed within delta 20%, before it was <{{pre['active-route-count']}}>, now it is <{{post['active-route-count']}}> "
+          err: "Test Failed!!! Active route for routing table <{{post['table-name']}}> has changed more than delta 20%, before it was <{{pre['active-route-count']}}>, now it is <{{post['active-route-count']}}> "
+        - delta: protocols/protocol-route-count, 20%
+          info: "Active route on <{{post['table-name']}}> for protocol <{{post['protocols/protocol-name']}}> has changed within delta 20%, before it was <{{pre['protocols/protocol-route-count']}}>, now it is <{{post['protocols/protocol-route-count']}}> "
+          err: "Test Failed!!! Active route on <{{post['table-name']}}> for protocol <{{post['protocols/protocol-name']}}> has changed more than delta 20%, before it was <{{pre['protocols/protocol-route-count']}}>, now it is <{{post['protocols/protocol-route-count']}}> "
+        - no-diff: protocols/protocol-route-count
+          info: "Active route on <{{post['table-name']}}> for protocol <{{post['protocols/protocol-name']}}> is the same "
+          err: "Test Failed!!! Active route on <{{post['table-name']}}> for protocol <{{post['protocols/protocol-name']}}>  was <{{pre['protocols/protocol-route-count']}}>, now it is <{{post['protocols/protocol-route-count']}}> "
