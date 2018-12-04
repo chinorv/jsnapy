@@ -1,6 +1,7 @@
 
 tests_include:
   - rsvp-interface
+  - rsvp_session_count
   - rsvp_session
 
 rsvp-interface:
@@ -11,12 +12,24 @@ rsvp-interface:
       tests:
       - list-not-less:
         err: 'Test Failed!!! RSVP interface {{pre["interface-name"]}} is missing' 
-        info: 'Test Succeeded!! RSVP interface {{pre["interface-name"]}} is present'
-        
+        info: 'Test Succeeded!! RSVP interface {{post["interface-name"]}} is present'
+      - list-not-more:
+        err: 'Test Failed, but don't worry!!! RSVP interface {{post["interface-name"]}} was added' 
+        info: 'Test Succeeded!! RSVP interface {{post["interface-name"]}} is present'  
       - is-equal: rsvp-status, Up
         err: Test Failed!!! RSVP neighbor on {{post["interface-name"]}} is {{post["rsvp-status"]}} and before was {{pre["rsvp-status"]}}
         info: Test Succeeded!! RSVP neighbor on {{post["interface-name"]}} is Up
         
+rsvp_session_count:
+  - command: show rsvp session
+  - iterate:
+      xpath: rsvp-session-data
+      id: count
+      tests:
+        - err: 'Test Failed!!! RSVP session with name {{post["name"]}} to {{post["destination-address"]}} has LSP state {{post["lsp-state"]}}.' 
+          info: Test Succeeded!! RSVP LSP {{post["name"]}} state is Up
+          is-equal: count
+
 rsvp_session:
   - command: show rsvp session
   - iterate:

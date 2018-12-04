@@ -13,7 +13,7 @@ show_interfaces_extensive:
           err: "Test Failed!!! {{post['name']}} is {{post['admin-status']}} before was {{pre['admin-status']}} \t"
           info: "Test Passed! States are the same, interface <{{post['name']}}> is: with admin status <{{post['admin-status']}}> "
   - iterate:
-      xpath: physical-interface
+      xpath: physical-interface[contains(name,"ge")]
       id: name
       tests:
         - is-equal: mtu, 9100
@@ -35,7 +35,7 @@ show_interfaces_extensive:
           info: "Test Passed! Same input bps"
 
 interface_terse:
-  - command: show interfaces terse
+  - command: show interfaces description
   - iterate:
       xpath: physical-interface/logical-interface
       id: name
